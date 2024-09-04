@@ -2,14 +2,9 @@ from datetime import datetime, timedelta
 
 
 def get_years(period):
-
     days = period_to_days(period)
-
-    years = sorted(
-        set([datetime.strptime(day, "%Y-%m-%d").strftime("%Y") for day in days])
-    )
+    years = sorted(set([datetime.strptime(day, "%Y-%m-%d").strftime("%Y") for day in days]))
     years = [int(year) for year in years]
-
     return years
 
 
@@ -22,17 +17,6 @@ def get_days_of_year(days, year):
 
 
 def period_to_days(period):
-    """
-    Standardizes datasets based on metadata.
-
-    Args:
-        metadata (DataFrame): Metadata containing information about datasets.
-        overwrite (bool, optional): Whether to overwrite existing standardized datasets. Default is False.
-
-    Returns:
-        DataFrame: Merged and standardized dataset with column names following Darwin Core terminology.
-    """
-
     dates = period.split(":")
     if len(dates) == 1:
         ini = fin = dates[0]

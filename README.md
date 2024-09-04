@@ -23,3 +23,13 @@ The Climate-Pix repository is provided under the [GNU General Public License](LI
 ## Contact
 
 If you have any questions or feedback regarding Climate-Pix, please don't hesitate to [contact us](mailto:aniskhan25@gmail.com). We're here to help!
+
+
+git clone https://github.com/aniskhan25/climate-pix.git
+cd climate-pix
+python3 -m venv venv
+source venv/bin/activate
+pip install -U pip
+pip install -r requirements.txt
+
+pandas rasterio
