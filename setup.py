@@ -1,22 +1,19 @@
 from setuptools import setup, find_packages
 
 setup(
-    name='climatepix',
-    version='0.1.0',
-    description='A tool for fetching environmental indicators for coordinates.',
-    author='@nis',
-    author_email='aniskhan25@gmail.com',
-    url='https://github.com/aniskhan25/climatepix',
-    license="GPLv3+",
-
-    packages=find_packages(where='climatepix'),
-    package_dir={'': 'climatepix'},
-
+    name='climatepix',                       # The name of your package
+    version='0.1.0',                          # The version of your package
+    packages=find_packages(),                 # Automatically find all packages
+    package_dir={'climatepix': 'climatepix'}, # Map package name to the directory
+    entry_points={
+        'console_scripts': [
+            'climate-pix=climatepix.main:main',  # Command-line script to run main()
+        ],
+    },
     install_requires=[
         'pandas',
         'rasterio',
         'fiona',
     ],
-
-    python_requires='>=3.6',
+    python_requires='>=3.6',                  # Specify the minimum Python version
 )

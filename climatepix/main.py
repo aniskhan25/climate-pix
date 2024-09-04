@@ -3,10 +3,10 @@ import os
 import rasterio as rio
 import pandas as pd
 
-from utils.urls import build_url
-from utils.output import construct_df
-from utils.coords import reproject_coords
-from utils.period import (
+from climatepix.utils.urls import build_url
+from climatepix.utils.output import construct_df
+from climatepix.utils.coords import reproject_coords
+from climatepix.utils.period import (
     get_years,
     period_to_days,
     get_day_of_year,
