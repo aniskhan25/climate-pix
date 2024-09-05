@@ -14,6 +14,7 @@ setup(
         'pandas',
         'rasterio',
         'fiona',
+        'pyproj',
     ],
     python_requires='>=3.6',                  # Specify the minimum Python version
 )
