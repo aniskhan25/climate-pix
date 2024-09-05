@@ -8,6 +8,10 @@ def get_years(period):
     return years
 
 
+def get_months_of_year(days):
+    return list({datetime.strptime(day, "%Y-%m-%d").timetuple().tm_mon for day in days})
+
+
 def get_day_of_year(days):
     return [datetime.strptime(day, "%Y-%m-%d").timetuple().tm_yday for day in days]
 

@@ -1,4 +1,4 @@
-def build_url(climatic_var_single, year, version=4):
+def build_url(climatic_var_single, year, version=4, aggregation_level="daily"):
 
     if climatic_var_single not in ["Tmax", "Tmin", "Prcp"]:
         raise ValueError("climatic_var_single must be one of 'Tmax', 'Tmin' or 'Prcp'")
@@ -14,5 +14,16 @@ def build_url(climatic_var_single, year, version=4):
 
     climvar = {"Tmax": "tmax", "Tmin": "tmin", "Prcp": "prec"}[climatic_var_single]
 
-    url = f"ftp://palantir.boku.ac.at/Public/ClimateData/v{version}_cogeo/AllDataRasters/{climvar}/Downscaled{climatic_var_single}{year}_cogeo.tif"
+    if aggregation_level == "yearly":
+        url = f"ftp://palantir.boku.ac.at/Public/ClimateData/v{version}_cogeo/YearlyDataRasters/{climvar}/Downscaled{climatic_var_single}{year}YearlySum_cogeo.tif"
+
+    elif aggregation_level == "monthly":
+        url = f"ftp://palantir.boku.ac.at/Public/ClimateData/v{version}_cogeo/MonthlyDataRasters/{climvar}/Downscaled{climatic_var_single}{year}MonthlySum_cogeo.tif"
+
+    elif aggregation_level == "daily":
+        url = f"ftp://palantir.boku.ac.at/Public/ClimateData/v{version}_cogeo/AllDataRasters/{climvar}/Downscaled{climatic_var_single}{year}_cogeo.tif"
+    
+    else:
+        raise ValueError(f"Invalid aggregation level '{aggregation_level}'. Available options are 'yearly', 'monthly' or 'daily'.")
+    
     return url
