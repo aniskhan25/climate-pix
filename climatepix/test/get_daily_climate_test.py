@@ -35,7 +35,7 @@ def test_get_daily_climate_three():
 
     period = "2002-01-31:2002-02-03"
 
-    df = fetch_climate_data(coords=coords, period=period, climatic_var=climatic_var, aggregation_level="daily")
+    df = fetch_climate_data(coords=coords, period=period, climatic_var=climatic_var, aggregation_level="All")
 
     assert df.shape == (8, 4)
 
@@ -48,7 +48,7 @@ def test_get_daily_climate_four():
 
     period = "2001-12-31:2002-01-03"
 
-    df = fetch_climate_data(coords=coords, period=period, climatic_var=climatic_var, aggregation_level="monthly")
+    df = fetch_climate_data(coords=coords, period=period, climatic_var=climatic_var, aggregation_level="Monthly")
 
     assert df.shape == (4, 4)
 
@@ -61,6 +61,6 @@ def test_get_daily_climate_five():
 
     period = "2001-12-31:2002-01-03"
 
-    df = fetch_climate_data(coords=coords, period=period, climatic_var=climatic_var, aggregation_level="yearly")
+    df = fetch_climate_data(coords=coords, period=period, climatic_var=climatic_var, aggregation_level="Yearly")
 
     assert df.shape == (4, 4)

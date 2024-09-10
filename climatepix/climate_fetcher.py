@@ -28,13 +28,14 @@ def get_daily_climate(coords: list, period: str, climatic_var: str, aggregation_
     days = period_to_days(period)
 
     urls = [build_url(climatic_var, year, aggregation_level=aggregation_level) for year in years]
+    
     days_of_years = [get_days_of_year(days, year) for year in years]
 
     climate_values = []
     for url, day_data in zip(urls, days_of_years):
-        if aggregation_level == "yearly":
+        if aggregation_level == "Yearly":
             values = get_daily_climate_single(url, coords, [1])
-        elif aggregation_level == "monthly":
+        elif aggregation_level == "Monthly":
             months = get_months_of_year(day_data)
             values = get_daily_climate_single(url, coords, months)
         else:
@@ -47,13 +48,13 @@ def get_daily_climate(coords: list, period: str, climatic_var: str, aggregation_
 
 def fetch_climate_data(
     coords: list = None,
-    climatic_var: str = "Prcp",
+    climatic_vars: list = ["Prcp"],
     period: str = "2000-12-31:2001-01-03",
     output_dir: str = "climatepix/output",
     output_fn: str = "climate_values_df.csv",
     coords_df: pd.DataFrame = None,
     input_crs: str = "EPSG:4326",
-    aggregation_level: str = "daily"
+    aggregation_level: str = "All"
 ) -> pd.DataFrame:
     dst_crs = CRS.from_epsg(4326)  # WGS84 Longitude/Latitude
     src_crs = CRS.from_string(input_crs)
@@ -61,23 +62,37 @@ def fetch_climate_data(
     if coords_df is not None:
         coords = extract_coords_from_df(coords_df)
     elif coords is None:
-        raise ValueError("Either coords or precomputed_df must be provided.")
+        raise ValueError("Either coords or coords_df must be provided.")
 
     transformed_coords = transform_coords(coords, src_crs, dst_crs)
 
-    raw_climate_data = get_daily_climate(transformed_coords, period, climatic_var, aggregation_level)
+    all_climate_data = pd.DataFrame()
 
-    climate_values_df = construct_climate_dataframe(
-        coords,
-        raw_climate_data["years"],
-        raw_climate_data["days_of_years"],
-        raw_climate_data["values"],
-        aggregation_level
-    )
+    for climatic_var in climatic_vars:
+        raw_climate_data = get_daily_climate(transformed_coords, period, climatic_var, aggregation_level)
 
-    save_to_csv(climate_values_df, output_dir, output_fn)
+        climate_values_df = construct_climate_dataframe(
+            coords,
+            raw_climate_data["years"],
+            raw_climate_data["days_of_years"],
+            raw_climate_data["values"],
+            aggregation_level
+        )
 
-    return climate_values_df
+        climate_values_df.rename(columns={"value": climatic_var}, inplace=True)
+
+        if all_climate_data.empty:
+            all_climate_data = climate_values_df
+        else:
+            all_climate_data = pd.merge(
+                all_climate_data,
+                climate_values_df,
+                on=list(climate_values_df.columns.difference([climatic_var])),
+            )
+
+    save_to_csv(all_climate_data, output_dir, output_fn)
+
+    return all_climate_data
 
 
 def extract_coords_from_df(coords_df: pd.DataFrame) -> list:
@@ -94,5 +109,5 @@ def save_to_csv(df: pd.DataFrame, output_dir: str, output_fn: str):
 
 if __name__ == "__main__":
     coords = [[473245.00402982143, 6980252.896166361], [473245.00402982143, 6880252.896166361]]  # Example coordinates in EPSG:3067
-    climate_values_df = fetch_climate_data(coords, input_crs="EPSG:3067", aggregation_level="yearly")
+    climate_values_df = fetch_climate_data(coords, input_crs="EPSG:3067", aggregation_level="Monthly", climatic_vars=["Tmax", "Tmin", "Prcp"])
     print(climate_values_df)

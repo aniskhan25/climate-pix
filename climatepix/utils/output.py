@@ -8,10 +8,10 @@ def construct_climate_dataframe(
 ) -> pd.DataFrame:
     period_title, coords_flat, days_flat, climate_values_flat = "", [], [], []
 
-    if aggregation_level == "yearly":
+    if aggregation_level == "Yearly":
         period_title = 'year'
         coords_flat, days_flat = flatten_for_yearly(coords, years)
-    elif aggregation_level == "monthly":
+    elif aggregation_level == "Monthly":
         period_title = 'month'
         coords_flat, days_flat = flatten_for_monthly(coords, days_of_years)
     else:
