@@ -19,6 +19,10 @@ def construct_climate_dataframe(
 
     climate_values_flat = flatten_climate_values(coords, climate_values, aggregation_level)
 
+    print(days_of_years)
+    print(coords_flat)
+    print(days_flat)
+    print(climate_values_flat)
     df = pd.DataFrame({
         'x': [coord[0] for coord in coords_flat],
         'y': [coord[1] for coord in coords_flat],

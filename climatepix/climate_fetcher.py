@@ -107,6 +107,12 @@ def save_to_csv(df: pd.DataFrame, output_dir: str, output_fn: str):
 
 
 if __name__ == "__main__":
-    coords = [[473245.00402982143, 6980252.896166361], [473245.00402982143, 6880252.896166361]]  # Example coordinates in EPSG:3067
-    climate_values_df = fetch_climate_data(coords, input_crs="EPSG:3067", aggregation_level="All", climatic_vars=["Tmin", "Tmax"])
+    coords = pd.DataFrame([[473245.00402982143, 6980252.896166361], [473245.00402982143, 6880252.896166361], [473245.00402982143, 6880252.896166361]], columns=['x', 'y'])
+    climate_values_df = fetch_climate_data(
+        coords_df=coords, 
+        input_crs="EPSG:3067", 
+        period="2017-01-01:2017-01-31", 
+        aggregation_level="Monthly",
+        climatic_vars=["Tmax", "Tmin", "Prcp"]
+    )
     print(climate_values_df)
