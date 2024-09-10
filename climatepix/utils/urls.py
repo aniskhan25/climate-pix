@@ -19,6 +19,9 @@ def build_url(climatic_var_single, year, version=4, aggregation_level="All"):
     else:
         value_type = "Avg"
     
-    url = f"ftp://palantir.boku.ac.at/Public/ClimateData/v{version}_cogeo/{aggregation_level}DataRasters/{climvar}/Downscaled{climatic_var_single}{year}{aggregation_level}{value_type}_cogeo.tif"
+    if aggregation_level == "All":
+        url = f"ftp://palantir.boku.ac.at/Public/ClimateData/v{version}_cogeo/{aggregation_level}DataRasters/{climvar}/Downscaled{climatic_var_single}{year}_cogeo.tif"    
+    else:
+        url = f"ftp://palantir.boku.ac.at/Public/ClimateData/v{version}_cogeo/{aggregation_level}DataRasters/{climvar}/Downscaled{climatic_var_single}{year}{aggregation_level}{value_type}_cogeo.tif"
 
     return url
