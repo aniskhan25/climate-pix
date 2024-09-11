@@ -1,28 +1,27 @@
+import numpy as np
 import pandas as pd
 
-from climatepix.utils.period import get_months_of_year
+from climatepix.utils.period import get_months_first_day, get_years_first_day, get_all_days_in_period
 
 
 def construct_climate_dataframe(
-    coords: list, days_of_years: list, climate_values: list, aggregation_level: str
+    coords: list, period: str, climate_values: list, aggregation_level: str
 ) -> pd.DataFrame:
-    period_title, coords_flat, days_flat, climate_values_flat = "", [], [], []
+    coords_flat, days_flat, climate_values_flat = [], [], []
 
     if aggregation_level == "Yearly":
-        coords_flat, days_flat = flatten_for_yearly(coords, days_of_years)
+        coords_flat, days_flat = flatten_for_yearly(coords, period)
 
     elif aggregation_level == "Monthly":
-        coords_flat, days_flat = flatten_for_monthly(coords, days_of_years)
+        days_of_months = get_months_first_day(period)
+        coords_flat, days_flat = flatten_for_monthly(coords, days_of_months)
 
     else:
+        days_of_years = get_all_days_in_period(period)
         coords_flat, days_flat = flatten_for_daily(coords, days_of_years)
 
     climate_values_flat = flatten_climate_values(coords, climate_values, aggregation_level)
-
-    print(days_of_years)
-    print(coords_flat)
-    print(days_flat)
-    print(climate_values_flat)
+    
     df = pd.DataFrame({
         'x': [coord[0] for coord in coords_flat],
         'y': [coord[1] for coord in coords_flat],
@@ -33,20 +32,19 @@ def construct_climate_dataframe(
     return df
 
 
-def flatten_for_yearly(coords, days_of_years):
-    days = [days[0] for days in days_of_years]
+def flatten_for_yearly(coords, period):
+    days = get_years_first_day(period)
     coords_flat = [coord for coord in coords for _ in days]
     days_flat = days * len(coords)
     return coords_flat, days_flat
 
 
-def flatten_for_monthly(coords, days_of_years):
+def flatten_for_monthly(coords, months_of_years):
     coords_flat, days_flat = [], []
-    months_of_years = [get_months_of_year(days) for days in days_of_years]
     for coord in coords:
-        for i, months in enumerate(months_of_years):
-            coords_flat.extend([coord] * len(months))
-            days_flat.append(days_of_years[i][0])
+        for months in months_of_years:
+            coords_flat.extend([coord])
+            days_flat.append(months)
     return coords_flat, days_flat
 
 
@@ -67,4 +65,4 @@ def flatten_climate_values(coords, climate_values, aggregation_level):
         for j in range(num_items):
             climate_values_flat.extend(climate_values[j * len(coords) + i])
 
-    return climate_values_flat
+    return np.array(climate_values_flat, dtype=np.float32)

@@ -43,7 +43,7 @@ def get_daily_climate(coords: list, period: str, climatic_var: str, aggregation_
             values = get_daily_climate_single(url, coords, days)
         climate_values.extend(values)
 
-    return {"days_of_years": days_of_years, "values": climate_values}
+    return climate_values
 
 
 def fetch_climate_data(
@@ -69,12 +69,12 @@ def fetch_climate_data(
     all_climate_data = pd.DataFrame()
 
     for climatic_var in climatic_vars:
-        raw_climate_data = get_daily_climate(transformed_coords, period, climatic_var, aggregation_level)
+        climate_values = get_daily_climate(transformed_coords, period, climatic_var, aggregation_level)
 
         climate_values_df = construct_climate_dataframe(
             coords,
-            raw_climate_data["days_of_years"],
-            raw_climate_data["values"],
+            period,
+            climate_values,
             aggregation_level
         )
 
@@ -86,7 +86,7 @@ def fetch_climate_data(
             all_climate_data = pd.merge(
                 all_climate_data,
                 climate_values_df,
-                on=list(climate_values_df.columns.difference([climatic_var])),
+                on=['x','y','day'],
             )
 
     save_to_csv(all_climate_data, output_dir, output_fn)
@@ -107,12 +107,15 @@ def save_to_csv(df: pd.DataFrame, output_dir: str, output_fn: str):
 
 
 if __name__ == "__main__":
-    coords = pd.DataFrame([[473245.00402982143, 6980252.896166361], [473245.00402982143, 6880252.896166361], [473245.00402982143, 6880252.896166361]], columns=['x', 'y'])
+    coords = pd.DataFrame([[473245, 6980252], [473255, 6880252], [473265, 6880252]], columns=['x', 'y'])
     climate_values_df = fetch_climate_data(
         coords_df=coords, 
         input_crs="EPSG:3067", 
-        period="2017-01-01:2017-01-31", 
-        aggregation_level="Monthly",
+        period="2016-12-31:2017-01-04", 
+        aggregation_level="Yearly",
         climatic_vars=["Tmax", "Tmin", "Prcp"]
     )
-    print(climate_values_df)
+
+    print(f"Climate Data Shape: {climate_values_df.shape}")
+    print(climate_values_df.head())
+    
